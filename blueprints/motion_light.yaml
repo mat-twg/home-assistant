@@ -28,6 +28,78 @@ blueprint:
           max: 3600
           unit_of_measurement: seconds
 
+    time_delay:
+      name: Time Delay
+      description: The time delay determines how long the lights, switches, scenes, and scripts will remain active after all triggers are clear, initiating the time delay to turn them OFF.
+      default: 5
+      selector:
+        number:
+          min: 0
+          max: 30
+          step: 0.5
+          unit_of_measurement: minutes
+
+    include_light_control:
+      name: Use The Light Control Options (Optional)
+      description: Select if you would like to use brightness, colour temperature, or transition.
+        These settings will only affect a 'light' entity that supports each selected option.
+        The settings for brightness, colour temperature, and transition are provided below.
+      default: []
+      selector:
+        select:
+          multiple: true
+          options:
+            - label: Use brightness
+              value: "use_brightness"
+            - label: Use colour temperature
+              value: "use_colour_temperature"
+            - label: Use transition
+              value: "use_transition"
+    light_brightness:
+      name: Brightness
+      description: The brightness setting for the lights when they are turned ON.
+      default: 100
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: slider
+          step: 1
+          unit_of_measurement: '%'
+    light_colour_temperature:
+      name: Colour Temperature
+      description: The colour temperature setting for the lights when they are turned ON.
+      default: 5000
+      selector:
+        number:
+          min: 2000
+          max: 8000
+          mode: slider
+          step: 100
+          unit_of_measurement: 'kelvin'
+    light_transition_on:
+      name: Transition - ON
+      description: The transition setting for the lights when they are turned ON.
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 5
+          mode: slider
+          step: 0.5
+          unit_of_measurement: seconds
+    light_transition_off:
+      name: Transition - OFF
+      description: The transition setting for the lights when they are turned OFF.
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 30
+          mode: slider
+          step: 1
+          unit_of_measurement: seconds
+
 # If motion is detected within the delay,
 # we restart the script.
 mode: restart
@@ -43,6 +115,8 @@ action:
   - alias: "Turn on the light"
     service: light.turn_on
     target: !input light_target
+    data:
+      brightness: '{{start_brightness}}'
   - alias: "Wait until there is no motion from device"
     wait_for_trigger:
       platform: state
